@@ -18,6 +18,6 @@ NetPay float not null default 0
 )
 
 Insert into EmployeePayrollTable 
-(EmpName, Gender, Phone, EmpAddress, Department, StartDate, BasicPay, Deductions, IncomeTax, NetPay) values ('Riya','F',8887779999,'Mumbai','Accounts','28/08/2021',20000,2000,0,18000),('Omkar','Male',9999888877,'Pune','Developer','26/08/2021',30000,2000,1000,27000);
+(EmpName, Gender, Phone, EmpAddress, Department, StartDate, BasicPay, Deductions, IncomeTax, NetPay) values ('Riya','Female',8887779999,'Mumbai','Accounts','28/08/2021',20000,2000,0,18000),('Omkar','Male',9999888877,'Pune','Developer','26/08/2021',30000,2000,1000,27000);
 
 select * from EmployeePayrollTable;

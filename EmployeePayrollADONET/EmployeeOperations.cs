@@ -159,28 +159,29 @@ namespace EmployeePayrollADONET
                     sqlConnect.Open();
                     Console.WriteLine(" SQL Database connection open..");
                     SqlCommand cmd = new SqlCommand("spUpdateBasicPay", sqlConnect);
-                    cmd.CommandType = CommandType.StoredProcedure;
 
+                    cmd.CommandType = CommandType.StoredProcedure;
                     emp.EmpName = empName;
                     cmd.Parameters.AddWithValue("@EmpName", emp.EmpName);
-                    
+
                     //update net pay when updating basic pay
                     SqlCommand com = new SqlCommand("spGetAllEmployeeDetails", sqlConnect); //query, sqlconnection
                     SqlDataReader dr = com.ExecuteReader();
                     if (dr.HasRows)
-                    { 
-                    while(dr.Read())
+                    {
+                        while (dr.Read())
                         {
                             emp.EmpName = dr.GetString(1);
                             emp.Deductions = dr.GetDouble(8);
                             emp.IncomeTax = dr.GetDouble(9);
-                            if(emp.EmpName.ToUpper() == empName.ToUpper())
+                            if (emp.EmpName.ToUpper() == empName.ToUpper())
                             {
                                 emp.NetPay = 30000 - (emp.Deductions + emp.IncomeTax);
                             }
                         }
                     }
                     dr.Close();
+
                     int affRows = cmd.ExecuteNonQuery();    //returns num of affected rows after query execution
                     sqlConnect.Close();
                     Console.WriteLine(" SQL Database connection closed..");
@@ -194,5 +195,56 @@ namespace EmployeePayrollADONET
             catch (Exception ex)
             {   Console.WriteLine(ex.Message);  }
         }
+
+        //get all employee data in a date range
+        public void GetRowsByDateRange()
+        {
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    Console.WriteLine(" SQL Database connection open..");
+                    SqlCommand cmd = new SqlCommand("spGetRowsByDateRange", sqlConnect);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    Console.WriteLine("\n Enter date range (dd/mm/yyyy) :");
+                    Console.Write(" Minimum date : ");      string date1 = Console.ReadLine();
+                    Console.Write(" Maximum date : ");      string date2 = Console.ReadLine();
+
+                    cmd.Parameters.AddWithValue("@MinDate", date1);
+                    cmd.Parameters.AddWithValue("@MaxDate", date2);
+                    
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.HasRows)
+                    {
+                        Console.WriteLine(" Name \t Address \t StartDate \t NetPay");
+                        while (dr.Read())
+                        {
+                            emp.EmpName = dr.GetString(1);
+                            emp.EmpAddress = dr.GetString(4);
+                            emp.StartDate = dr.GetString(6);
+                            emp.NetPay = dr.GetDouble(10);
+
+                            Console.Write(" {0} \t {1} \t {2} \t {3}\n", emp.EmpName, emp.EmpAddress, emp.StartDate, emp.NetPay);
+                        }
+                    }
+                    dr.Close();
+
+                    int affRows = cmd.ExecuteNonQuery();    //returns num of affected rows after query execution
+                    sqlConnect.Close();
+                    Console.WriteLine(" SQL Database connection closed..");
+
+                    if (affRows >= 1)
+                    { Console.WriteLine(" Query Executed successfully."); }
+
+                }
+            }
+            catch (Exception ex)
+            { Console.WriteLine(ex.Message); }
+        }
+
     }
 }
